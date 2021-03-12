@@ -1,0 +1,17 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "chai": "^4.3.3",
+    "ethereum-waffle": "^3.3.0",
+    "ethers": "^5.0.32",
+    "hardhat": "^2.1.1"
+  },
+  "dependencies": {
+    "@aragon/minime": "^1.0.0",
+    "@aragon/os": "^4.4.0",
+    "@aragon/test-helpers": "^2.1.0",
+    "@aragon/toolkit": "^0.0.7-beta.1"
+  }
+}

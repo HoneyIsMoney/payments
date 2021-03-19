@@ -1,5 +1,6 @@
 /* eslint no-use-before-define: "warn" */
 const hre = require("hardhat");
+const fs = require('fs')
 const { encodeCallScript } = require("@aragon/test-helpers/evmScript");
 const { encodeActCall } = require("@aragon/toolkit");
 const { agvePayments1 } = require("./agvePayments1.json");
@@ -12,6 +13,22 @@ const voting = "0xd3d974ec212d7c4bd06a1eee8744a86f74690c2f";
 const agve = "0x550c6e72f243f2e506585ae3a8a8cbfbed8e0ec0";
 const hny = "0x44ffef1a859e1272c58fdbd644e9e08b33cf66c9";
 const abi = ["function newVote(bytes,string,bool,bool)"];
+
+
+const saveCallData = (calldata) => {
+  fs.appendFile(`calldata.txt`, `\n\n--------- calldata ---------\n\n`, err => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  })
+  fs.appendFile(`calldata.txt`, calldata, err => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  })
+}
 
 
 const main = async () => {
@@ -42,7 +59,9 @@ const payments = async (token, payments, votingContract) => {
         calldata: data,
       };
     })
-  );
+  )
+
+  saveCallData(script)
 
   await votingContract.newVote(script, "payments", true, true);
 };

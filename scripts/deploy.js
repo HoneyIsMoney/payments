@@ -38,10 +38,10 @@ const main = async () => {
   console.log("creating AGVE payments...");
 
   console.log('\nAGVE payments 1')
-  //await payments(agve, agvePayments1, votingContract);
+  await payments(agve, agvePayments1, votingContract);
 
   console.log('AGVE payments 2')
-  //await payments(agve, agvePayments2, votingContract);
+  await payments(agve, agvePayments2, votingContract);
 
   console.log('HNY payments 1')
   await payments(hny, hnyPayments, votingContract);

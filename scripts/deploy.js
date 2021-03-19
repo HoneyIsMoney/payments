@@ -27,7 +27,7 @@ const main = async () => {
   await payments(agve, agvePayments2, votingContract);
 
   console.log('HNY payments 1')
-  await payments(hny, hnyPayments, votingContract);
+   await payments(hny, hnyPayments, votingContract);
 };
 
 const payments = async (token, payments, votingContract) => {

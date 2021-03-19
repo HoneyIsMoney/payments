@@ -35,7 +35,7 @@ module.exports = {
       gas: 10000000
     },
     xdai: {
-      url: `https://poa-xdai.gateway.pokt.network/v1/${XDAI}`,
+      url: `https://rpc.xdaichain.com/`,
       accounts: [`0x${PRIVATE_KEY}`],
       gas: 10000000
     },

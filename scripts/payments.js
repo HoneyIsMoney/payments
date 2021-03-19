@@ -2,9 +2,9 @@
 const hre = require("hardhat");
 const { encodeCallScript } = require("@aragon/test-helpers/evmScript");
 const { encodeActCall } = require("@aragon/toolkit");
-const { agvePayments1 } = require("./agvePayments1.json");
-const { agvePayments2 } = require("./agvePayments2.json");
-const { hnyPayments } = require("./hnyPayments.json");
+const { agvePayments1 } = require("./agve1.json");
+const { agvePayments2 } = require("./agve2.json");
+const { hnyPayments } = require("./hny1.json");
 
 // https://rinkeby.client.aragon.org/#/paymenttest/
 const agent = "0xa1eea15936ec80cfdbab319441d916b01cdc86b3";
@@ -48,7 +48,7 @@ const payments = async (token, payments, votingContract) => {
 };
 
 const encodeTransfer = async (token, to, amount) => {
-  const call = await encodeActCall("transfer(address,address,uint256)", [token, to, ethers.utils.parseEther(amount)]);
+  const call = encodeActCall("transfer(address,address,uint256)", [token, to, ethers.utils.parseEther(amount)]);
   return call;
 };
 

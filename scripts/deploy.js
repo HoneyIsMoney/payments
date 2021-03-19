@@ -8,8 +8,8 @@ const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");
 
 // https://rinkeby.client.aragon.org/#/paymenttest/
-const agent = "0xa1eea15936ec80cfdbab319441d916b01cdc86b3";
-const voting = "0xd3d974ec212d7c4bd06a1eee8744a86f74690c2f";
+const agent = "0xc9df0c63fc5cf7f3d437e5dae6798c347001c9c3";
+const voting = "0xceda6ffd65d1de66aee33dc2016cc97878a665e9";
 const agve = "0x550c6e72f243f2e506585ae3a8a8cbfbed8e0ec0";
 const hny = "0x44ffef1a859e1272c58fdbd644e9e08b33cf66c9";
 const abi = ["function newVote(bytes,string,bool,bool)"];
@@ -38,13 +38,13 @@ const main = async () => {
   console.log("creating AGVE payments...");
 
   console.log('\nAGVE payments 1')
-  await payments(agve, agvePayments1, votingContract);
+  //await payments(agve, agvePayments1, votingContract);
 
   console.log('AGVE payments 2')
-  await payments(agve, agvePayments2, votingContract);
+  //await payments(agve, agvePayments2, votingContract);
 
   console.log('HNY payments 1')
-   await payments(hny, hnyPayments, votingContract);
+  await payments(hny, hnyPayments, votingContract);
 };
 
 const payments = async (token, payments, votingContract) => {

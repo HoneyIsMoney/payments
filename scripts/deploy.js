@@ -7,11 +7,11 @@ const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");
 
-// https://rinkeby.client.aragon.org/#/paymenttest/
-const agent = "0xc9df0c63fc5cf7f3d437e5dae6798c347001c9c3";
-const voting = "0xceda6ffd65d1de66aee33dc2016cc97878a665e9";
-const agve = "0x550c6e72f243f2e506585ae3a8a8cbfbed8e0ec0";
-const hny = "0x44ffef1a859e1272c58fdbd644e9e08b33cf66c9";
+// https:https://aragon.1hive.org/#/agavetest
+const agent = "0x65795247433b5e22f9bec64878774d8b06ad4b42";
+const voting = "0x9df0d277b3db4010c1b2a9aba5f9be8a270e0e29"; //0xd4856cd82cb507b2691bcc3f02d8939671a800c0
+const agve = "0x265b0085e154effb1696352eb70130a2f3ec7eef"; // https://aragon.1hive.org/#/agvefaucet/0xacbb7a072f489c9a84dc549514036c854d1e25ab/
+const hny = "0xd8d62872f6a7446e4f7880220bd83a69440a1543"; //https://aragon.1hive.org/#/hnyfaucet/0x880cacdd53875f52686be2f3be775e6aa16c9bc1/
 const abi = ["function newVote(bytes,string,bool,bool)"];
 
 

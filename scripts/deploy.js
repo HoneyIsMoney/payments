@@ -1,8 +1,7 @@
 /* eslint no-use-before-define: "warn" */
 const hre = require("hardhat");
 const fs = require('fs')
-const { encodeCallScript } = require("@aragon/test-helpers/evmScript");
-const { encodeActCall } = require("@aragon/toolkit");
+const { encodeCallScript, encodeActCall } = require("./helpers/dao");
 const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");

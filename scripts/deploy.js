@@ -11,6 +11,7 @@ const agent = "0x65795247433b5e22f9bec64878774d8b06ad4b42";
 const voting = "0x9df0d277b3db4010c1b2a9aba5f9be8a270e0e29"; //0xd4856cd82cb507b2691bcc3f02d8939671a800c0
 const agve = "0x265b0085e154effb1696352eb70130a2f3ec7eef"; // https://aragon.1hive.org/#/agvefaucet/0xacbb7a072f489c9a84dc549514036c854d1e25ab/
 const hny = "0xd8d62872f6a7446e4f7880220bd83a69440a1543"; //https://aragon.1hive.org/#/hnyfaucet/0x880cacdd53875f52686be2f3be775e6aa16c9bc1/
+const tm = "0x83616df927e5c4c7d6c3c6e55331dfb1614bed38";
 const abi = ["function newVote(bytes,string,bool,bool)"];
 
 const main = async () => {
@@ -51,22 +52,39 @@ const multiPayments = async (token, paymentsList, votingContract) => {
 
 	const callscript = encodeCallScript(encodedActions);
 
+	const voteScript = encodeCallScript([
+		{
+			to: tm,
+			calldata: encodeActCall("newVote(bytes,string,bool,bool)", [
+				callscript,
+				"",
+				true,
+				true
+			]),
+		},
+	]);
+
+	const signers = await hre.ethers.getSigners();
+	const tokenManager = new ethers.Contract(
+		tm,
+		["function forward(bytes) external"],
+		signers[0]
+	);
+
+	await tokenManager.forward(voteScript);
+
 	saveCallData(callscript);
 
-	await votingContract.newVote(callscript, "payments", true, true);
+	// await votingContract.newVote(callscript, "payments", true, true);
 };
 
 const saveCallData = (calldata) => {
-	fs.appendFile(
-		`calldata.txt`,
-		`--------- calldata ---------\n\n`,
-		(err) => {
-			if (err) {
-				console.error(err);
-				return;
-			}
+	fs.appendFile(`calldata.txt`, `--------- calldata ---------\n\n`, (err) => {
+		if (err) {
+			console.error(err);
+			return;
 		}
-	);
+	});
 	fs.appendFile(`calldata.txt`, calldata, (err) => {
 		if (err) {
 			console.error(err);
@@ -74,7 +92,6 @@ const saveCallData = (calldata) => {
 		}
 	});
 };
-
 
 main()
 	.then(() => process.exit(0))

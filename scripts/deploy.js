@@ -7,7 +7,7 @@ const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");
 
-// https:https://aragon.1hive.org/#/agavetest
+// https://aragon.1hive.org/#/agavetest
 const agent = "0x65795247433b5e22f9bec64878774d8b06ad4b42";
 const voting = "0x9df0d277b3db4010c1b2a9aba5f9be8a270e0e29"; //0xd4856cd82cb507b2691bcc3f02d8939671a800c0
 const agve = "0x265b0085e154effb1696352eb70130a2f3ec7eef"; // https://aragon.1hive.org/#/agvefaucet/0xacbb7a072f489c9a84dc549514036c854d1e25ab/

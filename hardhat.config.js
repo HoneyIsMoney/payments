@@ -22,6 +22,12 @@ module.exports = {
     },
   },
   networks: {
+    hardhat: {
+      forking: {
+        url: "https://xdai-archive.blockscout.com",
+        blockNumber: 15186206,
+      },
+    },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
       accounts: [`0x${PRIVATE_KEY}`],

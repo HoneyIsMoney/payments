@@ -1,6 +1,6 @@
 /* eslint no-use-before-define: "warn" */
 const hre = require("hardhat");
-const fs = require('fs')
+const fs = require("fs");
 const { encodeCallScript, encodeActCall } = require("./helpers/dao");
 const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
@@ -13,66 +13,72 @@ const agve = "0x265b0085e154effb1696352eb70130a2f3ec7eef"; // https://aragon.1hi
 const hny = "0xd8d62872f6a7446e4f7880220bd83a69440a1543"; //https://aragon.1hive.org/#/hnyfaucet/0x880cacdd53875f52686be2f3be775e6aa16c9bc1/
 const abi = ["function newVote(bytes,string,bool,bool)"];
 
+const main = async () => {
+	const signers = await hre.ethers.getSigners();
+	const votingContract = new ethers.Contract(voting, abi, signers[0]);
+	console.log("\nusing: ", signers[0].address);
+	console.log("creating AGVE payments...");
+
+	console.log("\nAGVE payments 1");
+	await multiPayments(agve, agvePayments1, votingContract);
+
+	console.log("AGVE payments 2");
+	await multiPayments(agve, agvePayments2, votingContract);
+
+	console.log("HNY payments 1");
+	await multiPayments(hny, hnyPayments, votingContract);
+};
+
+const multiPayments = async (token, paymentsList, votingContract) => {
+	const calldatum = await Promise.all(
+		paymentsList.map(
+			async (user) =>
+				await encodeActCall("transfer(address,address,uint256)", [
+					token,
+					user.receiverAddress,
+					ethers.utils.parseEther(user.amount),
+				])
+		)
+	);
+
+	const encodedActions = [];
+	calldatum.map((data) => {
+		encodedActions.push({
+			to: agent,
+			calldata: data,
+		});
+	});
+
+	const callscript = encodeCallScript(encodedActions);
+
+	saveCallData(callscript);
+
+	await votingContract.newVote(callscript, "payments", true, true);
+};
 
 const saveCallData = (calldata) => {
-  fs.appendFile(`calldata.txt`, `\n\n--------- calldata ---------\n\n`, err => {
-    if (err) {
-      console.error(err)
-      return
-    }
-  })
-  fs.appendFile(`calldata.txt`, calldata, err => {
-    if (err) {
-      console.error(err)
-      return
-    }
-  })
-}
-
-
-const main = async () => {
-  const signers = await hre.ethers.getSigners();
-  const votingContract = new ethers.Contract(voting, abi,  signers[0])
-  console.log("\nusing: ", signers[0].address);
-  console.log("creating AGVE payments...");
-
-  console.log('\nAGVE payments 1')
-  await payments(agve, agvePayments1, votingContract);
-
-  console.log('AGVE payments 2')
-  await payments(agve, agvePayments2, votingContract);
-
-  console.log('HNY payments 1')
-  await payments(hny, hnyPayments, votingContract);
+	fs.appendFile(
+		`calldata.txt`,
+		`--------- calldata ---------\n\n`,
+		(err) => {
+			if (err) {
+				console.error(err);
+				return;
+			}
+		}
+	);
+	fs.appendFile(`calldata.txt`, calldata, (err) => {
+		if (err) {
+			console.error(err);
+			return;
+		}
+	});
 };
 
-const payments = async (token, payments, votingContract) => {
-  const calldatum = await Promise.all(
-    payments.map(async (user) => await encodeTransfer(token, user.receiverAddress, user.amount))
-  );
-
-  const script = encodeCallScript(
-    calldatum.map((data) => {
-      return {
-        to: agent,
-        calldata: data,
-      };
-    })
-  )
-
-  saveCallData(script)
-
-  await votingContract.newVote(script, "payments", true, true);
-};
-
-const encodeTransfer = async (token, to, amount) => {
-  const call = await encodeActCall("transfer(address,address,uint256)", [token, to, ethers.utils.parseEther(amount)]);
-  return call;
-};
 
 main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+	.then(() => process.exit(0))
+	.catch((error) => {
+		console.error(error);
+		process.exit(1);
+	});

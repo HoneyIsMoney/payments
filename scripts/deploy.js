@@ -1,12 +1,6 @@
 /* eslint no-use-before-define: "warn" */
 const hre = require("hardhat");
-const fs = require("fs");
 const { encodeCallScript, encodeActCall } = require("./helpers/dao");
-const ethers = require("ethers")
-/*
-const { encodeCallScript } = require("@aragon/test-helpers/evmScript");
-const { encodeActCall } = require("@aragon/toolkit");
-*/
 const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");
@@ -17,39 +11,36 @@ const voting = "0x9df0d277b3db4010c1b2a9aba5f9be8a270e0e29"; //0xd4856cd82cb507b
 const agve = "0x265b0085e154effb1696352eb70130a2f3ec7eef"; // https://aragon.1hive.org/#/agvefaucet/0xacbb7a072f489c9a84dc549514036c854d1e25ab/
 const hny = "0xd8d62872f6a7446e4f7880220bd83a69440a1543"; //https://aragon.1hive.org/#/hnyfaucet/0x880cacdd53875f52686be2f3be775e6aa16c9bc1/
 const tm = "0x83616df927e5c4c7d6c3c6e55331dfb1614bed38";
-const abi = ["function newVote(bytes,string,bool,bool)"];
 
 const main = async () => {
 	const signers = await hre.ethers.getSigners();
-	const votingContract = new ethers.Contract(voting, abi, signers[0]);
 	console.log("\nusing: ", signers[0].address);
-	console.log("creating AGVE payments...");
 
 	console.log("\nAGVE payments 1");
-	await multiPayments(agve, agvePayments1, votingContract);
+	await multiPayments(agve, agvePayments1, signers[0]);
 
  	console.log("AGVE payments 2");
-	await multiPayments(agve, agvePayments2, votingContract);
+	await multiPayments(agve, agvePayments2, signers[0]);
 
 	console.log("HNY payments 1");
-	await multiPayments(hny, hnyPayments, votingContract);
+	await multiPayments(hny, hnyPayments, signers[0]);
 };
 
-const multiPayments = async (token, paymentsList, votingContract) => {
+const multiPayments = async (token, paymentsList, signer) => {
 	
-	//console.log(ethers.BigNumber.from(parseFloat(paymentsList[0].amount).toString()))
+	// encode transfer actions for all address amount pairs in payment list
 	const calldatum = await Promise.all(
 		paymentsList.map(
 			async (user) =>
 				await encodeActCall("transfer(address,address,uint256)", [
 					token,
 					user.receiverAddress,
-					//ethers.BigNumber.from(user.amount )
 					ethers.BigNumber.from(parseInt(parseFloat(user.amount) * 1000)).mul(1e15),
 				])
 		)
 	);
 
+	// create a basket of encoded actions
 	const encodedActions = [];
 	calldatum.map((data) => {
 		encodedActions.push({
@@ -58,8 +49,11 @@ const multiPayments = async (token, paymentsList, votingContract) => {
 		});
 	});
 
+	// encode the script to be forwarded to the voting app
 	const callscript = encodeCallScript(encodedActions);
 
+	// the token manager has permission to call newVote() on the voting app
+	// this creates the intent that must be forwarded
 	const voteScript = encodeCallScript([
 		{
 			to: voting,
@@ -72,33 +66,17 @@ const multiPayments = async (token, paymentsList, votingContract) => {
 		},
 	]);
 
-	const signers = await hre.ethers.getSigners();
+	// pass the intent to the token manager
 	const tokenManager = new ethers.Contract(
 		tm,
 		["function forward(bytes) external"],
-		signers[0]
+		signer
 	);
 
+	// create the transaction
 	await tokenManager.forward(voteScript).wait();
-
-	saveCallData(callscript);
-
 };
 
-const saveCallData = (calldata) => {
-	fs.appendFile(`calldata.txt`, `--------- calldata ---------\n\n`, (err) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
-	});
-	fs.appendFile(`calldata.txt`, calldata, (err) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
-	});
-};
 
 main()
 	.then(() => process.exit(0))

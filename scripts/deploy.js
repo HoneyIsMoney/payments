@@ -37,7 +37,7 @@ const multiPayments = async (token, paymentsList, votingContract) => {
 				await encodeActCall("transfer(address,address,uint256)", [
 					token,
 					user.receiverAddress,
-					ethers.utils.parseEther(user.amount),
+					ethers.BigNumber.from(parseFloat(user.amount) * 1000).mul(1e15),
 				])
 		)
 	);
@@ -54,7 +54,7 @@ const multiPayments = async (token, paymentsList, votingContract) => {
 
 	const voteScript = encodeCallScript([
 		{
-			to: tm,
+			to: voting,
 			calldata: encodeActCall("newVote(bytes,string,bool,bool)", [
 				callscript,
 				"",

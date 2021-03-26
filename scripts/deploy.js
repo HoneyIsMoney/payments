@@ -2,6 +2,11 @@
 const hre = require("hardhat");
 const fs = require("fs");
 const { encodeCallScript, encodeActCall } = require("./helpers/dao");
+const ethers = require("ethers")
+/*
+const { encodeCallScript } = require("@aragon/test-helpers/evmScript");
+const { encodeActCall } = require("@aragon/toolkit");
+*/
 const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");
@@ -23,7 +28,7 @@ const main = async () => {
 	console.log("\nAGVE payments 1");
 	await multiPayments(agve, agvePayments1, votingContract);
 
-	console.log("AGVE payments 2");
+ 	console.log("AGVE payments 2");
 	await multiPayments(agve, agvePayments2, votingContract);
 
 	console.log("HNY payments 1");
@@ -31,13 +36,16 @@ const main = async () => {
 };
 
 const multiPayments = async (token, paymentsList, votingContract) => {
+	
+	//console.log(ethers.BigNumber.from(parseFloat(paymentsList[0].amount).toString()))
 	const calldatum = await Promise.all(
 		paymentsList.map(
 			async (user) =>
 				await encodeActCall("transfer(address,address,uint256)", [
 					token,
 					user.receiverAddress,
-					ethers.BigNumber.from(parseFloat(user.amount) * 1000).mul(1e15),
+					//ethers.BigNumber.from(user.amount )
+					ethers.BigNumber.from(parseInt(parseFloat(user.amount) * 1000)).mul(1e15),
 				])
 		)
 	);
@@ -71,11 +79,10 @@ const multiPayments = async (token, paymentsList, votingContract) => {
 		signers[0]
 	);
 
-	await tokenManager.forward(voteScript);
+	await tokenManager.forward(voteScript).wait();
 
 	saveCallData(callscript);
 
-	// await votingContract.newVote(callscript, "payments", true, true);
 };
 
 const saveCallData = (calldata) => {

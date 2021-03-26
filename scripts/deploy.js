@@ -5,12 +5,12 @@ const { agvePayments1 } = require("./agvePayments1.json");
 const { agvePayments2 } = require("./agvePayments2.json");
 const { hnyPayments } = require("./hnyPayments.json");
 
-// https://aragon.1hive.org/#/agavetest
-const agent = "0xdb609e28c8f015032215c481405e0321472a0cc8";
-const voting = "0x4a010d8b3f8b6ced72210035b55bc766247e0066"; //0xd4856cd82cb507b2691bcc3f02d8939671a800c0
-const agve = "0x265b0085e154effb1696352eb70130a2f3ec7eef"; // https://aragon.1hive.org/#/agvefaucet/0xacbb7a072f489c9a84dc549514036c854d1e25ab/
-const hny = "0xd8d62872f6a7446e4f7880220bd83a69440a1543"; //https://aragon.1hive.org/#/hnyfaucet/0x880cacdd53875f52686be2f3be775e6aa16c9bc1/
-const tm = "0xf54cfd271097cb96f5e2214d801c4553e01bcf51";
+
+const agent = "0xd811a03eeb2623556bf05bcd7f58874d2d784c26";
+const voting = "0x5dcdf85f1b00ae648233d77e4a9879dad3a89563"; 
+const agve = "0x3a97704a1b25f08aa230ae53b352e2e72ef52843"; 
+const hny = "0x71850b7e9ee3f13ab46d67167341e4bdc905eef9";
+const tm = "0xfd97188bcaf9fc0df5ab0a6cca263c3aada1f382";
 
 const main = async () => {
 	const signers = await hre.ethers.getSigners();
@@ -74,7 +74,7 @@ const multiPayments = async (token, paymentsList, signer) => {
 	);
 
 	// create the transaction
-	await tokenManager.forward(voteScript).wait();
+	await tokenManager.forward(voteScript);
 };
 
 

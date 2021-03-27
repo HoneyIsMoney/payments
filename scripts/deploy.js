@@ -17,10 +17,10 @@ const main = async () => {
 	console.log("\nusing: ", signers[0].address);
 
 	console.log("\nAGVE payments 1");
-	await multiPayments(agve, agvePayments1, signers[0]);
+	//await multiPayments(agve, agvePayments1, signers[0]);
 
  	console.log("AGVE payments 2");
-	await multiPayments(agve, agvePayments2, signers[0]);
+	//await multiPayments(agve, agvePayments2, signers[0]);
 
 	console.log("HNY payments 1");
 	await multiPayments(hny, hnyPayments, signers[0]);

@@ -18,23 +18,28 @@ const main = async () => {
 };
 
 const vest = async (amount, payee, start, vesting, signer) => {
-	// encode transfer actions for all address amount pairs in payment list
-	const calldatum = await Promise.all(
-		[
-			encodeActCall(
-				"function assignVested(address,uint256,uint64,uint64,uint64,bool)",
-				[
-					payee,
-					ethers.BigNumber.from(parseInt(parseFloat(amount) * 1000)).mul(1e15),
-					start,
-					start,
-					vesting,
-					true,
-				]
-			)
-		]
-	)
-
+    /**
+    * @notice Assign `@tokenAmount(self.token(): address, _amount, false)` tokens to `_receiver` from the Token Manager's holdings with a `_revokable : 'revokable' : ''` vesting starting at `@formatDate(_start)`, cliff at `@formatDate(_cliff)` (first portion of tokens transferable), and completed vesting at `@formatDate(_vested)` (all tokens transferable)
+    * @param _receiver The address receiving the tokens, cannot be Token Manager itself
+    * @param _amount Number of tokens vested
+    * @param _start Date the vesting calculations start
+    * @param _cliff Date when the initial portion of tokens are transferable
+    * @param _vested Date when all tokens are transferable
+    * @param _revokable Whether the vesting can be revoked by the Token Manager
+    */
+	const calldatum = await Promise.all([
+		encodeActCall(
+			"function assignVested(address,uint256,uint64,uint64,uint64,bool)",
+			[
+				payee,
+				ethers.BigNumber.from(parseInt(parseFloat(amount) * 1000)).mul(1e15),
+				start,
+				start,
+				vesting,
+				true,
+			]
+		),
+	]);
 
 	// create a basket of encoded actions
 	const encodedActions = [
